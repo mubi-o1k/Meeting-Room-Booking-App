@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roomly — Meeting Room Booking</title>
+<style>
+:root{--ink:#17233b;--muted:#6b7890;--line:#e4e9f2;--bg:#f5f7fb;--blue:#315efb;--teal:#19a98b;--orange:#f5a623}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+.app{min-height:100vh;display:grid;grid-template-columns:245px 1fr}.sidebar{background:#111d35;color:white;padding:28px 18px;display:flex;flex-direction:column;gap:30px}.brand{font-size:23px;font-weight:800;letter-spacing:-.8px;padding:0 12px}.brand span{color:#82a0ff}.nav-label{font-size:11px;letter-spacing:1.5px;color:#8996b1;padding:0 12px;margin-bottom:8px}.nav button{width:100%;background:transparent;color:#cbd4e7;border:0;padding:12px;border-radius:10px;text-align:left;font-size:14px;cursor:pointer;margin:3px 0}.nav button.active,.nav button:hover{background:#263654;color:#fff}.side-note{margin-top:auto;background:#1c2a46;padding:17px;border-radius:14px;color:#bdc8df;font-size:12px;line-height:1.6}.side-note strong{display:block;color:white;font-size:14px;margin-bottom:5px}
+main{padding:32px clamp(18px,4vw,52px);max-width:1500px;width:100%;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.7px;color:var(--blue);font-weight:800}.top h1{font-size:clamp(26px,3vw,35px);letter-spacing:-1.2px;margin:8px 0}.sub{color:var(--muted);font-size:14px}.avatar{width:42px;height:42px;border-radius:14px;background:#dce5ff;color:#315efb;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:28px}.stat,.panel,.room{background:white;border:1px solid var(--line);border-radius:17px}.stat{padding:20px}.stat-head{display:flex;justify-content:space-between;color:var(--muted);font-size:13px}.stat-icon{width:34px;height:34px;border-radius:11px;background:#edf1ff;display:grid;place-items:center;color:var(--blue);font-weight:800}.stat-num{font-size:30px;font-weight:800;margin-top:15px;letter-spacing:-1px}.stat-foot{font-size:12px;color:var(--muted);margin-top:4px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:25px 0 16px}.section-head h2{font-size:20px;margin:0 0 5px;letter-spacing:-.5px}.section-head p{margin:0;color:var(--muted);font-size:13px}.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:white;color:var(--ink);min-width:0}button.primary{background:var(--blue);color:white;border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}button.primary:hover{background:#244ce0}.rooms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.room{overflow:hidden}.room-art{height:115px;padding:18px;display:flex;align-items:flex-end;justify-content:space-between;background:linear-gradient(135deg,#dbe5ff,#f0f3ff)}.room:nth-child(2) .room-art{background:linear-gradient(135deg,#d8f4eb,#effbf7)}.room:nth-child(3) .room-art{background:linear-gradient(135deg,#ffe8cc,#fff7e9)}.room-art .room-symbol{font-size:34px}.pill{font-size:11px;font-weight:800;padding:6px 9px;border-radius:20px;background:#fff;color:#315efb}.pill.busy{color:#bd6d00}.room-body{padding:17px}.room h3{margin:0 0 7px;font-size:17px}.room-meta{color:var(--muted);font-size:12px;display:flex;gap:12px;flex-wrap:wrap}.room-desc{font-size:13px;line-height:1.55;color:#5d6a81;margin:14px 0 17px;min-height:40px}.room-foot{display:flex;justify-content:space-between;align-items:center;gap:10px}.room-foot small{color:var(--muted)}.book-btn{border:1px solid #dce3f4;background:white;color:var(--blue);padding:9px 12px;border-radius:9px;font-weight:700;cursor:pointer}.book-btn:hover{background:#edf1ff}
+.panel{padding:20px;margin-top:25px}.booking-list{display:grid;gap:10px}.booking{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.booking:last-child{border-bottom:0}.booking strong{display:block;font-size:14px}.booking small{color:var(--muted);display:block;margin-top:5px}.cancel{border:0;background:#fff0ef;color:#bd4238;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:700}.empty{color:var(--muted);font-size:14px;padding:12px 0}
+.modal{position:fixed;inset:0;background:#0e1a31a6;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.modal.open{display:flex}.dialog{background:white;border-radius:18px;padding:25px;width:min(500px,100%);box-shadow:0 25px 90px #08152a55}.dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.dialog h2{margin:0;font-size:22px}.x{border:0;background:#f0f3f9;border-radius:9px;width:34px;height:34px;cursor:pointer;font-size:20px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:#56637b}.field input,.field select{width:100%}.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.secondary{background:white;border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer}.toast{position:fixed;bottom:22px;right:22px;background:#14213b;color:white;padding:13px 17px;border-radius:12px;box-shadow:0 8px 30px #0002;display:none;z-index:9}.toast.show{display:block}
+@media(max-width:980px){.app{grid-template-columns:1fr}.sidebar{padding:15px;gap:12px}.sidebar .nav-label,.side-note{display:none}.brand{padding:4px 8px}.nav{display:flex;gap:6px;overflow:auto}.nav button{white-space:nowrap;width:auto}.rooms{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding-top:22px}}
+@media(max-width:620px){.stats{grid-template-columns:1fr}.rooms{grid-template-columns:1fr}.top{align-items:flex-start}.section-head{align-items:flex-start;flex-direction:column}.controls{width:100%}.controls input{flex:1;width:100%}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.room-desc{min-height:0}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="brand">roomly<span>.</span></div>
+<div><div class="nav-label">WORKSPACE</div><nav class="nav"><button class="active" data-view="dashboard">▦ &nbsp; Dashboard</button><button data-view="bookings">▤ &nbsp; My bookings</button><button data-view="rooms">▣ &nbsp; Meeting rooms</button></nav></div>
+<div class="side-note"><strong>Make meetings matter.</strong>Find a space, choose a time, and bring your team together.</div>
+</aside>
+<main>
+<div class="top"><div><div class="eyebrow">Workspace overview</div><h1 id="pageTitle">Meeting room dashboard</h1><div class="sub" id="todayText">Plan your next great meeting.</div></div><div class="avatar">M</div></div>
+<div class="stats">
+<div class="stat"><div class="stat-head">Available rooms <span class="stat-icon">▣</span></div><div class="stat-num" id="availableCount">3</div><div class="stat-foot">Spaces ready to book today</div></div>
+<div class="stat"><div class="stat-head">My bookings <span class="stat-icon">▤</span></div><div class="stat-num" id="bookingCount">0</div><div class="stat-foot">Bookings saved in this browser</div></div>
+<div class="stat"><div class="stat-head">Total capacity <span class="stat-icon">♧</span></div><div class="stat-num">42</div><div class="stat-foot">Seats across all meeting spaces</div></div>
+</div>
+<div class="section-head"><div><h2 id="sectionTitle">Find your space</h2><p id="sectionDesc">Choose a room that fits your meeting.</p></div><div class="controls"><input id="search" placeholder="Search rooms…" aria-label="Search rooms"><button class="primary" id="newBooking">+ New booking</button></div></div>
+<div class="rooms" id="roomsGrid"></div>
+<section class="panel" id="bookingPanel"><div class="section-head" style="margin:0 0 12px"><div><h2>Upcoming bookings</h2><p>Your scheduled meetings at a glance.</p></div></div><div class="booking-list" id="bookingList"></div></section>
+</main>
+</div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="dialog"><div class="dialog-head"><h2 id="modalTitle">Book a meeting room</h2><button class="x" id="closeModal" aria-label="Close">×</button></div>
+<form id="bookingForm"><div class="form-grid">
+<div class="field full"><label for="meetingTitle">MEETING TITLE</label><input id="meetingTitle" required maxlength="70" placeholder="e.g. Sprint planning"></div>
+<div class="field full"><label for="roomSelect">MEETING ROOM</label><select id="roomSelect" required></select></div>
+<div class="field"><label for="bookDate">DATE</label><input id="bookDate" type="date" required></div>
+<div class="field"><label for="bookTime">START TIME</label><select id="bookTime" required></select></div>
+<div class="field"><label for="duration">DURATION</label><select id="duration"><option value="30">30 minutes</option><option value="60" selected>1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option></select></div>
+<div class="field"><label for="attendees">ATTENDEES</label><input id="attendees" type="number" min="1" max="42" value="4" required></div>
+<div class="field full"><label for="organizer">ORGANIZER</label><input id="organizer" required maxlength="60" placeholder="Your name"></div>
+</div><div class="form-actions"><button type="button" class="secondary" id="cancelModal">Cancel</button><button type="submit" class="primary">Confirm booking</button></div></form></div></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const rooms=[
+{id:'focus',name:'Focus Room',capacity:4,location:'Floor 2 · East wing',type:'Small team',symbol:'◫',desc:'A quiet, comfortable space for focused conversations and quick huddles.'},
+{id:'collab',name:'Collaboration Hub',capacity:8,location:'Floor 3 · Central',type:'Team room',symbol:'▤',desc:'Flexible seating and a bright setup for brainstorming and project workshops.'},
+{id:'board',name:'Boardroom',capacity:30,location:'Floor 5 · Executive wing',type:'Conference',symbol:'▥',desc:'A spacious conference room for presentations, reviews, and larger meetings.'}
+];
+const $=id=>document.getElementById(id);
+const dateNow=new Date();const localISO=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+$('todayText').textContent=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(dateNow)+' · Your workspace, simplified';
+$('bookDate').min=localISO(dateNow);$('bookDate').value=localISO(dateNow);
+for(let h=8;h<=17;h++){for(const m of [0,30]){if(h===17&&m===30)continue;let v=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');let o=document.createElement('option');o.value=v;o.textContent=new Date(`2000-01-01T${v}:00`).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});$('bookTime').append(o)}}
+let bookings=[];try{bookings=JSON.parse(localStorage.getItem('roomlyBookings')||'[]')}catch(e){bookings=[]}
+let activeView='dashboard',chosenRoom=null;
+function save(){localStorage.setItem('roomlyBookings',JSON.stringify(bookings))}
+function sameDay(a,b){return a===b}
+function overlaps(a,b){let a0=a.time.split(':').reduce((h,m)=>h*60+ +m,0),b0=b.time.split(':').reduce((h,m)=>h*60+ +m,0);return a0<b0+Number(b.duration)&&b0<a0+Number(a.duration)}
+function roomBusy(roomId,date){return bookings.some(b=>b.roomId===roomId&&b.date===date)}
+function renderRooms(){let q=$('search').value.toLowerCase().trim();let list=rooms.filter(r=>(r.name+' '+r.location+' '+r.type).toLowerCase().includes(q));$('roomsGrid').innerHTML=list.map(r=>{let busy=roomBusy(r.id,localISO(dateNow));return `<article class="room"><div class="room-art"><span class="room-symbol">${r.symbol}</span><span class="pill ${busy?'busy':''}">${busy?'Booked today':'Available today'}</span></div><div class="room-body"><h3>${r.name}</h3><div class="room-meta"><span>♧ ${r.capacity} seats</span><span>⌖ ${r.location}</span></div><p class="room-desc">${r.desc}</p><div class="room-foot"><small>${r.type}</small><button class="book-btn" data-book="${r.id}">Book room ↗</button></div></div></article>`}).join('')||'<div class="empty">No rooms match that search.</div>';document.querySelectorAll('[data-book]').forEach(b=>b.onclick=()=>openModal(b.dataset.book));$('availableCount').textContent=rooms.filter(r=>!roomBusy(r.id,localISO(dateNow))).length}
+function renderBookings(){let upcoming=bookings.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));$('bookingCount').textContent=bookings.length;$('bookingList').innerHTML=upcoming.length?upcoming.map(b=>{let r=rooms.find(x=>x.id===b.roomId);return `<div class="booking"><div><strong>${escapeHtml(b.title)} · ${r?r.name:'Room'}</strong><small>${escapeHtml(b.organizer)} · ${b.date} · ${fmtTime(b.time)} · ${b.duration} min · ${b.attendees} attendee(s)</small></div><button class="cancel" data-cancel="${b.id}">Cancel</button></div>`}).join(''):'<div class="empty">No bookings yet. Select a room and create your first meeting.</div>';document.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>{bookings=bookings.filter(x=>x.id!==b.dataset.cancel);save();render();toast('Booking cancelled.')})}
+function render(){renderRooms();renderBookings()}
+function fmtTime(t){let [h,m]=t.split(':').map(Number);return new Date(2000,0,1,h,m).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function openModal(roomId){chosenRoom=roomId||null;$('roomSelect').innerHTML=rooms.map(r=>`<option value="${r.id}" ${r.id===chosenRoom?'selected':''}>${r.name} — up to ${r.capacity} people</option>`).join('');$('modal').classList.add('open');if(!roomId)$('roomSelect').selectedIndex=0;updateCapacity();$('meetingTitle').focus()}
+function closeModal(){$('modal').classList.remove('open')}
+function updateCapacity(){let r=rooms.find(x=>x.id===$('roomSelect').value);$('attendees').max=r.capacity;if(+$('attendees').value>r.capacity)$('attendees').value=r.capacity}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2600)}
+$('newBooking').onclick=()=>openModal();$('closeModal').onclick=closeModal;$('cancelModal').onclick=closeModal;$('roomSelect').onchange=updateCapacity;$('search').oninput=renderRooms;
+$('modal').onclick=e=>{if(e.target===$('modal'))closeModal()};
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{activeView=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));$('pageTitle').textContent=activeView==='bookings'?'My bookings':activeView==='rooms'?'Meeting rooms':'Meeting room dashboard';$('sectionTitle').textContent=activeView==='bookings'?'Your scheduled meetings':activeView==='rooms'?'Explore meeting spaces':'Find your space';$('sectionDesc').textContent=activeView==='bookings'?'Review or cancel a booking.':activeView==='rooms'?'Find the right room for your team.':'Choose a room that fits your meeting.';$('bookingPanel').style.display=activeView==='rooms'?'none':'block';$('roomsGrid').style.display=activeView==='bookings'?'none':'grid';if(activeView==='bookings')$('bookingPanel').scrollIntoView({behavior:'smooth',block:'start'})});
+$('bookingForm').onsubmit=e=>{e.preventDefault();let r=rooms.find(x=>x.id===$('roomSelect').value);let b={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),title:$('meetingTitle').value.trim(),roomId:r.id,date:$('bookDate').value,time:$('bookTime').value,duration:+$('duration').value,attendees:+$('attendees').value,organizer:$('organizer').value.trim()};if(b.attendees>r.capacity){toast(`This room fits up to ${r.capacity} people.`);return}let conflict=bookings.some(x=>x.roomId===b.roomId&&x.date===b.date&&overlaps(b,x));if(conflict){toast('That room is already booked during this time. Choose another slot.');return}bookings.push(b);save();render();closeModal();$('bookingForm').reset();$('bookDate').value=localISO(dateNow);$('attendees').value=4;toast('Meeting room booked successfully!')};
+render();
+</script>
+</body>
+</html>
